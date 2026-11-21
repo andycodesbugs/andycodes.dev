@@ -1,5 +1,3 @@
-// Everything in [brackets] is a placeholder to replace with real content.
-
 export const links = {
   github: 'https://github.com/andycodesbugs',
   x: 'https://x.com/andycodesbugs',
@@ -7,7 +5,7 @@ export const links = {
 
 export const email: string | null = null; // e.g. 'hello@andycodes.dev'
 
-export const stack = ['[Language]', '[Framework]', '[Database]', '[Tool]'];
+export const stack = ['TypeScript', 'Go', 'Rust', 'Swift', 'React Native', 'Astro', 'PostgreSQL', 'Cloudflare Workers', 'Docker'];
 
 type Color = 'coral' | 'amber' | 'teal' | 'lilac';
 
