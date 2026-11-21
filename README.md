@@ -1,15 +1,77 @@
-# andycodes.dev
+<p align="center">
+  <img src="brand/x-banner.png" alt="function andy() { if (today === &quot;friday&quot;) return deploy(); }" width="100%" />
+</p>
 
-Personal site for andycodes. Astro, static output, no client framework.
+<h1 align="center">andycodes.dev</h1>
+
+<p align="center">
+  The personal site of <a href="https://github.com/andycodesbugs">andycodes</a>, styled like the editor it was written in.<br />
+  <a href="https://andycodes.dev"><b>andycodes.dev</b></a> ·
+  <a href="https://x.com/andycodesbugs">@andycodesbugs</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/andycodesbugs/andycodes.dev/actions/workflows/deploy.yml"><img src="https://github.com/andycodesbugs/andycodes.dev/actions/workflows/deploy.yml/badge.svg" alt="Deploy status" /></a>
+  <img src="https://img.shields.io/badge/built_with-Astro-ff7a59?logo=astro&logoColor=white" alt="Built with Astro" />
+  <img src="https://img.shields.io/badge/client_framework-none-5ad1c0" alt="No client framework" />
+  <img src="https://img.shields.io/badge/fuel-coffee-ffc857" alt="Fuel: coffee" />
+</p>
+
+---
+
+## ▶ Run it
 
 ```sh
 npm install
 npm run dev      # http://localhost:4321
-npm run build    # outputs dist/
+npm run build    # static output in dist/
 ```
 
-- Content lives in `src/data/site.ts`; the hero and about copy are in `src/pages/index.astro`.
-- The logo (`src/components/Logo.astro`, `public/favicon.svg`) is the editor minimap of the `andy()` function in the hero.
-- `brand/` holds the source logo and the 1024 px profile picture used on GitHub, X and Reddit. `x-banner.png` (1500×500) is the X header. None of it is part of the built site.
+Node 22 or newer. That's the whole setup.
 
-Pushing to `main` deploys to GitHub Pages (`.github/workflows/deploy.yml`). The custom domain comes from `public/CNAME`.
+## 🗂 Where things live
+
+| Path | What's in it |
+|---|---|
+| `src/data/site.ts` | All the content: hero line, bio, stack, projects, links |
+| `src/pages/index.astro` | The page itself: hero, `projects.rs`, `about.md`, `contact.sh` |
+| `src/pages/404.astro` | The 404 page, which fails like a Rust compiler |
+| `src/components/EasterEggs.astro` | Things you weren't supposed to find (see below) |
+| `src/components/Logo.astro` | The logo |
+| `brand/` | Avatar and X banner. Not shipped with the site |
+
+## 🎨 The logo
+
+The logo is the **editor minimap of the `andy()` function** in the hero. Every bar is one token, coloured by its syntax highlighting:
+
+```ts
+function andy() {
+  const idea = await coffee();
+  return build(idea);
+}
+```
+
+The same four colours (coral, amber, teal, lilac) run through the whole site.
+
+## 🥚 Easter eggs
+
+<details>
+<summary>Spoilers. Try finding them on the site first.</summary>
+
+<br />
+
+- **Terminal:** press <kbd>`</kbd>, like in VS Code, or tap `>_` in the status bar. Try `help`, `ls -a`, `cargo run`, `sudo`, `coffee` and `vim`.
+- **Konami code:** <kbd>↑</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> <kbd>←</kbd> <kbd>→</kbd> <kbd>B</kbd> <kbd>A</kbd>.
+- **DevTools:** open the console and say hi to `andy.help()`.
+- **Status bar:** the `Ln, Col` counter follows your mouse.
+- **404:** visit any page that doesn't exist.
+
+</details>
+
+## 🚀 Deploying
+
+Every push to `main` builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`). The custom domain comes from `public/CNAME`, and DNS sits on Cloudflare.
+
+---
+
+<p align="center"><sub>Made with ☕ and questionable Friday deploys.</sub></p>
