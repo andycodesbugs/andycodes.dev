@@ -1,0 +1,71 @@
+---
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import { links } from '../data/site';
+
+interface Props { title?: string; description?: string }
+const {
+  title = 'andycodes.dev',
+  description = 'Andy turns coffee into ideas and ideas into code.',
+} = Astro.props;
+
+const tabs = [
+  { href: '#top', label: 'index.tsx' },
+  { href: '#projects', label: 'projects.ts' },
+  { href: '#about', label: 'about.md' },
+  { href: '#contact', label: 'contact.sh' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#141a27" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL("/apple-touch-icon.png", Astro.site)} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="titlebar">
+      <div class="wrap">
+        <a class="brand" href="#top">
+          <span class="brand-mark"><Logo /></span>
+          andycodes
+        </a>
+        <nav class="tabs" aria-label="Sections">
+          {tabs.map((t) => <a href={t.href} data-section={t.href.slice(1)}>{t.label}</a>)}
+        </nav>
+        <a class="btn btn-small" href={links.github}>GitHub</a>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="statusbar">
+      <div class="wrap">
+        <span><span class="dot" aria-hidden="true">●</span> main · andycodes.dev</span>
+        <span>Ln 1, Col 1 · UTF-8 · TypeScript</span>
+      </div>
+    </footer>
+
+    <script>
+      // Highlight the tab and minimap block of the section in view.
+      const links = document.querySelectorAll<HTMLAnchorElement>('[data-section]');
+      const mark = (id: string) =>
+        links.forEach((a) => a.setAttribute('aria-current', String(a.dataset.section === id)));
+      mark('top');
+      const observer = new IntersectionObserver(
+        (entries) => entries.forEach((e) => e.isIntersecting && mark(e.target.id)),
+        { rootMargin: '-45% 0px -50% 0px' },
+      );
+      document.querySelectorAll('[data-observe]').forEach((s) => observer.observe(s));
+    </script>
+  </body>
+</html>

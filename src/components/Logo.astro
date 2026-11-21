@@ -1,0 +1,22 @@
+---
+// The andycodes mark: an editor minimap of `function andy() { … }`.
+interface Props { size?: number; label?: string }
+const { size = 28, label } = Astro.props;
+---
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <rect x="8" y="14" width="14" height="6" rx="3" fill="#b8a4ff" />
+  <rect x="25" y="14" width="13" height="6" rx="3" fill="#5ad1c0" />
+  <rect x="41" y="14" width="6" height="6" rx="3" fill="#ffc857" />
+  <rect x="16" y="25" width="10" height="6" rx="3" fill="#ff7a59" />
+  <rect x="29" y="25" width="20" height="6" rx="3" fill="#ffc857" />
+  <rect x="16" y="36" width="14" height="6" rx="3" fill="#b8a4ff" />
+  <rect x="33" y="36" width="12" height="6" rx="3" fill="#5ad1c0" />
+  <rect x="8" y="47" width="6" height="6" rx="3" fill="#ffc857" />
+</svg>
