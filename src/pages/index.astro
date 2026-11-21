@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { links, email, stack, projects } from '../data/site';
+import { links, email, stack, projects, lead, bio } from '../data/site';
 
 const c = (name: string) => `var(--${name})`;
 ---
@@ -11,7 +11,7 @@ const c = (name: string) => `var(--${name})`;
         <div class="hero-text">
           <p class="file" style="color: var(--faint)">// andycodes.dev</p>
           <h1 id="hero-title">Hi, I'm Andy.<br />I write code.</h1>
-          <p class="lead">I build privacy-first apps and the self-hosted plumbing behind them, for people who would rather keep their data close.</p>
+          <p class="lead">{lead}</p>
           <div class="actions">
             <a class="btn btn-primary" href="#projects">See projects</a>
             <a class="btn" href="#contact">Get in touch</a>
@@ -58,7 +58,7 @@ const c = (name: string) => `var(--${name})`;
           <h2 id="about-title">About</h2>
         </div>
         <div>
-          <p class="bio">I build websites and apps with byteclub, a small Swiss software studio, and spend my spare time on side projects that keep data on your device or your own server. Apps are TypeScript and React Native, services are Go, and Swift and Rust come in where things need to be native. Next up: getting Interlock ready for other people to use.</p>
+          <p class="bio">{bio}</p>
           <p class="file" style="margin: 28px 0 12px; font-size: 13px; color: var(--muted)">// stack</p>
           <ul class="chips">{stack.map((s) => <li>{s}</li>)}</ul>
         </div>

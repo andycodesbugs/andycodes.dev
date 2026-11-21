@@ -3,6 +3,12 @@ export const links = {
   x: 'https://x.com/andycodesbugs',
 };
 
+export const lead =
+  'I build privacy-first apps and the self-hosted plumbing behind them, for people who would rather keep their data close.';
+
+export const bio =
+  'I build websites and apps with byteclub, a small Swiss software studio, and spend my spare time on side projects that keep data on your device or your own server. Apps are TypeScript and React Native, services are Go, and Swift and Rust come in where things need to be native. Next up: getting Interlock ready for other people to use.';
+
 export const email: string | null = null; // e.g. 'hello@andycodes.dev'
 
 export const stack = ['TypeScript', 'Go', 'Rust', 'Swift', 'React Native', 'Astro', 'PostgreSQL', 'Cloudflare Workers', 'Docker'];

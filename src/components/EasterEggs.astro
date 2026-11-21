@@ -1,0 +1,338 @@
+---
+// Hidden extras: a terminal panel (` key or the >_ button), the Konami code and a console greeting.
+import { links, email, projects, bio } from '../data/site';
+
+const data = {
+  links,
+  email,
+  bio,
+  projects: projects.map((p) => ({ name: p.name, type: p.type })),
+};
+---
+<script type="application/json" id="egg-data" set:html={JSON.stringify(data)} />
+
+<div class="term-panel" id="term" role="dialog" aria-label="Terminal" hidden>
+  <div class="term-head">
+    <span>TERMINAL <span class="term-dim">· zsh · guest@andycodes.dev</span></span>
+    <button type="button" class="term-close" data-term-close aria-label="Close terminal">×</button>
+  </div>
+  <div class="term-body" id="term-body">
+    <div class="term-out" id="term-out" aria-live="polite"></div>
+    <form class="term-line" id="term-form" autocomplete="off">
+      <label for="term-in" class="term-prompt">guest@andycodes.dev <span>~</span> $</label>
+      <input id="term-in" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="send" />
+    </form>
+  </div>
+</div>
+
+<div class="egg-toast" id="egg-toast" role="status" hidden></div>
+<canvas class="egg-rain" id="egg-rain" aria-hidden="true" hidden></canvas>
+
+<style is:global>
+  .term-toggle { font: inherit; color: var(--muted); background: none; border: 1px solid var(--line-strong); border-radius: 6px; padding: 2px 8px; cursor: pointer; }
+  .term-toggle:hover { color: var(--text); border-color: var(--muted); }
+
+  .term-panel { position: fixed; z-index: 50; left: 0; right: 0; bottom: 0; height: min(42vh, 360px); display: flex; flex-direction: column; background: var(--bg-deep); border-top: 1px solid var(--line-strong); box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.4); font-family: var(--mono); font-size: 14px; }
+  .term-panel[hidden] { display: none; }
+  .term-head { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 16px; border-bottom: 1px solid var(--line); font-size: 12px; letter-spacing: 0.04em; color: var(--text-soft); }
+  .term-dim { color: var(--faint); letter-spacing: 0; }
+  .term-close { width: 44px; height: 40px; font-size: 22px; color: var(--muted); background: none; border: 0; cursor: pointer; }
+  .term-close:hover { color: var(--text); }
+  .term-body { flex: 1; overflow-y: auto; padding: 12px 16px 16px; line-height: 1.6; }
+  .term-out p { margin: 0; white-space: pre-wrap; word-break: break-word; color: var(--text-soft); }
+  .term-out .cmd { color: var(--text); }
+  .term-out .err { color: var(--coral); }
+  .term-out .ok { color: var(--teal); }
+  .term-out .dim { color: var(--faint); }
+  .term-line { display: flex; flex-wrap: wrap; gap: 0 8px; align-items: center; }
+  .term-prompt { color: var(--teal); white-space: nowrap; }
+  .term-prompt span { color: var(--lilac); }
+  .term-line input { flex: 1 1 120px; min-width: 0; min-height: 32px; font: inherit; color: var(--text); background: none; border: 0; outline: none; caret-color: var(--amber); }
+
+  .egg-toast { position: fixed; z-index: 60; left: 50%; top: 24px; transform: translateX(-50%); max-width: calc(100vw - 32px); padding: 12px 18px; border-radius: 10px; background: var(--surface); border: 1px solid var(--amber); color: var(--text); font-family: var(--mono); font-size: 14px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45); }
+  .egg-toast[hidden] { display: none; }
+  .egg-rain { position: fixed; inset: 0; z-index: 40; width: 100%; height: 100%; pointer-events: none; }
+  .egg-rain[hidden] { display: none; }
+  html.god-mode .dot { color: var(--amber); }
+</style>
+
+<script>
+  type Data = {
+    links: Record<string, string>;
+    email: string | null;
+    bio: string;
+    projects: { name: string; type: string }[];
+  };
+  const data: Data = JSON.parse(document.getElementById('egg-data')!.textContent || '{}');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- toast ----------
+  const toast = document.getElementById('egg-toast')!;
+  let toastTimer = 0;
+  function say(msg: string) {
+    toast.textContent = msg;
+    toast.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => (toast.hidden = true), 4000);
+  }
+
+  // ---------- block rain (Konami) ----------
+  const colors = ['#ff7a59', '#ffc857', '#5ad1c0', '#b8a4ff'];
+  function rain() {
+    if (reduceMotion) return;
+    const canvas = document.getElementById('egg-rain') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.hidden = false;
+    canvas.width = innerWidth * dpr;
+    canvas.height = innerHeight * dpr;
+    ctx.scale(dpr, dpr);
+    const bars = Array.from({ length: 140 }, () => ({
+      x: Math.random() * innerWidth,
+      y: -Math.random() * innerHeight * 1.5,
+      w: 10 + Math.random() * 40,
+      v: 3 + Math.random() * 6,
+      c: colors[Math.floor(Math.random() * colors.length)],
+    }));
+    const end = performance.now() + 4500;
+    const frame = (t: number) => {
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      for (const b of bars) {
+        b.y += b.v;
+        ctx.fillStyle = b.c;
+        ctx.beginPath();
+        ctx.roundRect(b.x, b.y, b.w, 8, 4);
+        ctx.fill();
+      }
+      if (t < end) requestAnimationFrame(frame);
+      else canvas.hidden = true;
+    };
+    requestAnimationFrame(frame);
+  }
+
+  function godMode() {
+    document.documentElement.classList.add('god-mode');
+    const branch = document.querySelector('[data-branch]');
+    if (branch) branch.textContent = 'god-mode';
+    say('↑↑↓↓←→←→BA · cheat activated: infinite coffee ☕');
+    rain();
+  }
+
+  const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let pos = 0;
+  addEventListener('keydown', (e) => {
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    pos = key === konami[pos] ? pos + 1 : key === konami[0] ? 1 : 0;
+    if (pos === konami.length) {
+      pos = 0;
+      godMode();
+    }
+  });
+
+  // ---------- terminal ----------
+  const panel = document.getElementById('term')!;
+  const out = document.getElementById('term-out')!;
+  const body = document.getElementById('term-body')!;
+  const form = document.getElementById('term-form') as HTMLFormElement;
+  const input = document.getElementById('term-in') as HTMLInputElement;
+  const history: string[] = [];
+  let hIndex = 0;
+  let coffees = 0;
+  let greeted = false;
+
+  type Part = string | { text: string; href: string };
+  function print(parts: Part | Part[], cls = '') {
+    const p = document.createElement('p');
+    if (cls) p.className = cls;
+    for (const part of Array.isArray(parts) ? parts : [parts]) {
+      if (typeof part === 'string') p.append(part);
+      else {
+        const a = document.createElement('a');
+        a.href = part.href;
+        a.textContent = part.text;
+        if (part.href.startsWith('http')) a.rel = 'noopener';
+        p.append(a);
+      }
+    }
+    out.append(p);
+  }
+
+  const files: Record<string, () => void> = {
+    'about.md': () => print(data.bio),
+    'projects.rs': () => {
+      print('pub const PROJECTS: &[&str] = &[', 'dim');
+      for (const p of data.projects) print(`    "${p.name}", // ${p.type}`);
+      print('];', 'dim');
+    },
+    'contact.sh': () => cmds.contact([]),
+  };
+
+  const cmds: Record<string, (args: string[]) => void> = {
+    help: () =>
+      print(
+        [
+          'available commands:',
+          '  ls, cat <file>, whoami, projects, contact, github',
+          '  coffee, cargo run, sudo <anything>, vim, ping, date, echo',
+          '  clear, history, exit',
+          '',
+          'psst: some codes work better with arrow keys than with words.',
+        ].join('\n'),
+      ),
+    ls: (args) => {
+      if (args[0]?.startsWith('-a')) print('.  ..  .coffee-stash  about.md  contact.sh  projects.rs  secrets/');
+      else print('about.md  contact.sh  projects.rs  secrets/');
+    },
+    cat: (args) => {
+      const f = args[0]?.replace(/^\.\//, '');
+      if (!f) return print('cat: what should I read? try `cat about.md`', 'err');
+      if (f in files) return files[f]();
+      if (f.startsWith('secrets')) return print(`cat: ${f}: Permission denied. Nice try.`, 'err');
+      if (f === '.coffee-stash') return print('☕ ☕ ☕  (for emergencies only)');
+      print(`cat: ${f}: No such file or directory`, 'err');
+    },
+    cd: (args) => {
+      if (args[0]?.startsWith('secrets')) return print('cd: secrets: Permission denied', 'err');
+      if (!args[0] || args[0] === '~' || args[0] === '/') return;
+      print(`cd: ${args[0]}: it's a single page, there's nowhere to go`, 'err');
+    },
+    whoami: () => print('guest. andy is the one holding the coffee.'),
+    projects: () => files['projects.rs'](),
+    contact: () => {
+      print(['github  ', { text: data.links.github, href: data.links.github }]);
+      print(['x       ', { text: data.links.x, href: data.links.x }]);
+      if (data.email) print(['email   ', { text: data.email, href: `mailto:${data.email}` }]);
+    },
+    github: () => {
+      print('opening github…', 'ok');
+      window.open(data.links.github, '_blank', 'noopener');
+    },
+    coffee: () => {
+      coffees += 1;
+      const lines = ['brewing…', 'grinding beans…', 'still brewing…', 'ok, this is getting excessive'];
+      print(lines[Math.min(coffees - 1, lines.length - 1)], 'dim');
+      print(`☕ × ${coffees}. productivity +${coffees * 10}%.`, 'ok');
+      if (coffees === 5) say('achievement unlocked: caffeinated ☕☕☕☕☕');
+    },
+    cargo: (args) => {
+      if (args[0] !== 'run' && args[0] !== 'build') return print('usage: cargo run', 'dim');
+      print('   Compiling andy v0.1.0 (~/side-projects)', 'ok');
+      print(
+        [
+          'error[E0502]: cannot borrow `weekend` as mutable because it is also borrowed by `side_projects`',
+          '  --> src/life.rs:42:5',
+          '   |',
+          '42 |     relax(&mut weekend);',
+          '   |           ^^^^^^^^^^^^ mutable borrow occurs here',
+          '   |',
+          '   = help: consider shipping the side project first',
+        ].join('\n'),
+        'err',
+      );
+    },
+    sudo: (args) => {
+      if (args.join(' ').startsWith('rm -rf')) return print("nice try. it's a static site, there's nothing to delete.", 'err');
+      print('guest is not in the sudoers file. This incident will be reported.', 'err');
+    },
+    rm: () => print('rm: permission denied. also: rude.', 'err'),
+    vim: () => print('you are now stuck in vim forever. (just kidding, type :q)'),
+    vi: (a) => cmds.vim(a),
+    nano: () => print('nano? in this economy? try vim.'),
+    emacs: () => print('emacs: a great operating system, lacking only a decent editor.'),
+    ':q': () => close(),
+    ':wq': () => close(),
+    ':q!': () => close(),
+    ping: () => print('pong 🏓  (0.42 ms, served straight from the CDN)'),
+    date: () => print(new Date().toString()),
+    echo: (args) => print(args.join(' ')),
+    pwd: () => print('/home/guest'),
+    hello: () => print('hi! 👋 type `help` to see what I can do.'),
+    hi: (a) => cmds.hello(a),
+    konami: () => print('close. it is not a command though. think ↑ and ↓.'),
+    exit: () => close(),
+    clear: () => out.replaceChildren(),
+    history: () => history.forEach((h, i) => print(`${String(i + 1).padStart(4)}  ${h}`)),
+  };
+
+  function run(line: string) {
+    print(`$ ${line}`, 'cmd');
+    const [name, ...args] = line.trim().split(/\s+/);
+    if (!name) return;
+    const cmd = cmds[name.toLowerCase()];
+    if (cmd) cmd(args);
+    else print(`zsh: command not found: ${name}. try \`help\``, 'err');
+  }
+
+  function open() {
+    panel.hidden = false;
+    if (!greeted) {
+      greeted = true;
+      print("welcome to andy's terminal. type `help` to get started.", 'dim');
+    }
+    input.focus();
+  }
+  function close() {
+    panel.hidden = true;
+    document.querySelector<HTMLElement>('[data-term-open]')?.focus();
+  }
+  const toggle = () => (panel.hidden ? open() : close());
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const line = input.value;
+    input.value = '';
+    if (line.trim()) history.push(line);
+    hIndex = history.length;
+    run(line);
+    body.scrollTop = body.scrollHeight;
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp' && hIndex > 0) input.value = history[--hIndex];
+    else if (e.key === 'ArrowDown') input.value = history[++hIndex] ?? ((hIndex = history.length), '');
+    else return;
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  document.querySelectorAll('[data-term-open]').forEach((b) => b.addEventListener('click', toggle));
+  document.querySelector('[data-term-close]')!.addEventListener('click', close);
+  addEventListener('keydown', (e) => {
+    const typing = e.target instanceof HTMLInputElement && e.target !== input;
+    if (e.key === '`' && !typing && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      toggle();
+    } else if (e.key === 'Escape' && !panel.hidden) close();
+  });
+
+  // ---------- status bar cursor ----------
+  const cursor = document.querySelector('[data-cursor]');
+  if (cursor) {
+    let queued = false;
+    addEventListener('mousemove', (e) => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        cursor.textContent = `Ln ${Math.floor((e.pageY + 1) / 24) + 1}, Col ${Math.floor(e.pageX / 9) + 1}`;
+      });
+    });
+  }
+
+  // ---------- console greeting ----------
+  console.log(
+    '%c▬▬ ▬▬ ▬\n  ▬ ▬▬▬\n  ▬▬ ▬\n▬',
+    'color:#b8a4ff;font:700 16px/1.1 monospace',
+  );
+  console.log(
+    "%cHey, you opened the console. 👀\n%cYou're my kind of person. There's a terminal on this page too: press ` (backtick).\nOr type andy.help() right here.",
+    'color:#ffc857;font:700 14px sans-serif',
+    'color:#9aa3b5;font:13px sans-serif',
+  );
+  (window as unknown as { andy: object }).andy = {
+    help: () => console.log('andy.coffee(), andy.terminal(), andy.hire()'),
+    coffee: () => (cmds.coffee([]), console.log(`☕ × ${coffees}`)),
+    terminal: () => open(),
+    hire: () => console.log(`Say hi: ${data.links.github} · ${data.links.x}${data.email ? ' · ' + data.email : ''}`),
+  };
+</script>

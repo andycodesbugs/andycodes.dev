@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="404 · andycodes.dev" description="This page doesn't exist. It was probably a side project.">
+  <main class="wrap nf">
+    <p class="file" style="color: var(--coral)">404.rs</p>
+    <h1>This page didn't compile.</h1>
+
+    <div class="terminal nf-err" aria-label="Compiler error">
+<pre><span style="color: var(--coral)">error[E0404]</span>: page not found
+  <span style="color: var(--lilac)">--&gt;</span> andycodes.dev<span id="nf-path">/this-page</span>
+   <span style="color: var(--lilac)">|</span>
+ <span style="color: var(--lilac)">1 |</span> GET <span id="nf-get">/this-page</span>
+   <span style="color: var(--lilac)">|</span>     <span style="color: var(--coral)" id="nf-caret">^^^^^^^^^^</span> <span style="color: var(--coral)">value moved here, never brought back</span>
+   <span style="color: var(--lilac)">|</span>
+   <span style="color: var(--lilac)">=</span> <span style="color: var(--text)">note</span>: this was probably a side project that stayed an experiment
+   <span style="color: var(--lilac)">=</span> <span style="color: var(--teal)">help</span>: try <span style="color: var(--amber)">cd ~</span>, or blame the intern (there is no intern)</pre>
+    </div>
+
+    <p class="nf-blame"><span style="color: var(--faint)">$ git blame</span> <span id="nf-blame-path">/this-page</span><br />
+      <span style="color: var(--muted)">^0000000 (andy, 03:12) // TODO: write this page after one more coffee</span></p>
+
+    <div class="actions">
+      <a class="btn btn-primary" href="/">cd ~</a>
+      <a class="btn" href="/#projects">See projects</a>
+      <button type="button" class="btn nf-btn" data-term-open>Open a terminal</button>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .nf { padding-top: 88px; padding-bottom: 96px; min-height: 70vh; }
+  .nf h1 { margin: 12px 0 32px; font-size: clamp(36px, 5vw, 56px); letter-spacing: -0.04em; line-height: 1.05; }
+  .nf-err pre { margin: 0; font-family: var(--mono); font-size: 14px; line-height: 1.7; color: var(--text-soft); }
+  .nf-blame { margin: 24px 0 0; font-family: var(--mono); font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+  .nf-btn { background: none; font-family: inherit; cursor: pointer; }
+</style>
+
+<script>
+  const path = decodeURIComponent(location.pathname).slice(0, 60) || '/';
+  for (const id of ['nf-path', 'nf-get', 'nf-blame-path']) document.getElementById(id)!.textContent = path;
+  document.getElementById('nf-caret')!.textContent = '^'.repeat(Math.max(1, path.length));
+</script>

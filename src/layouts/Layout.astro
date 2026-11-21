@@ -3,6 +3,7 @@ import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Logo from '../components/Logo.astro';
+import EasterEggs from '../components/EasterEggs.astro';
 import { links } from '../data/site';
 
 interface Props { title?: string; description?: string }
@@ -10,6 +11,9 @@ const {
   title = 'andycodes.dev',
   description = 'Andy turns coffee into ideas and ideas into code.',
 } = Astro.props;
+
+// Section links point back to the home page when rendered elsewhere (e.g. the 404 page).
+const home = Astro.url.pathname === '/' ? '' : '/';
 
 const tabs = [
   { href: '#top', label: 'index.tsx' },
@@ -35,12 +39,12 @@ const tabs = [
   <body>
     <header class="titlebar">
       <div class="wrap">
-        <a class="brand" href="#top">
+        <a class="brand" href={`${home}#top`}>
           <span class="brand-mark"><Logo /></span>
           andycodes
         </a>
         <nav class="tabs" aria-label="Sections">
-          {tabs.map((t) => <a href={t.href} data-section={t.href.slice(1)}>{t.label}</a>)}
+          {tabs.map((t) => <a href={home + t.href} data-section={t.href.slice(1)}>{t.label}</a>)}
         </nav>
         <a class="btn btn-small" href={links.github}>GitHub</a>
       </div>
@@ -50,17 +54,19 @@ const tabs = [
 
     <footer class="statusbar">
       <div class="wrap">
-        <span><span class="dot" aria-hidden="true">●</span> main · andycodes.dev</span>
-        <span>Ln 1, Col 1 · UTF-8 · TypeScript</span>
+        <span><span class="dot" aria-hidden="true">●</span> <span data-branch>main</span> · andycodes.dev</span>
+        <span><span data-cursor>Ln 1, Col 1</span> · UTF-8 · TypeScript · <button type="button" class="term-toggle" data-term-open title="Open terminal (`)" aria-label="Open terminal">&gt;_</button></span>
       </div>
     </footer>
+
+    <EasterEggs />
 
     <script>
       // Highlight the tab and minimap block of the section in view.
       const links = document.querySelectorAll<HTMLAnchorElement>('[data-section]');
       const mark = (id: string) =>
         links.forEach((a) => a.setAttribute('aria-current', String(a.dataset.section === id)));
-      mark('top');
+      if (document.getElementById('top')) mark('top');
       const observer = new IntersectionObserver(
         (entries) => entries.forEach((e) => e.isIntersecting && mark(e.target.id)),
         { rootMargin: '-45% 0px -50% 0px' },
