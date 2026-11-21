@@ -5,7 +5,7 @@
 <h1 align="center">andycodes.dev</h1>
 
 <p align="center">
-  The personal site of <a href="https://github.com/andycodesbugs">andycodes</a>, styled like the editor it was written in.<br />
+  The personal site of <a href="https://github.com/andycodesbugs">andycodes</a>.<br />
   <a href="https://andycodes.dev"><b>andycodes.dev</b></a> ·
   <a href="https://x.com/andycodesbugs">@andycodesbugs</a>
 </p>
@@ -27,8 +27,6 @@ npm run dev      # http://localhost:4321
 npm run build    # static output in dist/
 ```
 
-Node 22 or newer. That's the whole setup.
-
 ## 🗂 Where things live
 
 | Path | What's in it |
@@ -39,19 +37,6 @@ Node 22 or newer. That's the whole setup.
 | `src/components/EasterEggs.astro` | Things you weren't supposed to find (see below) |
 | `src/components/Logo.astro` | The logo |
 | `brand/` | Avatar and X banner. Not shipped with the site |
-
-## 🎨 The logo
-
-The logo is the **editor minimap of the `andy()` function** in the hero. Every bar is one token, coloured by its syntax highlighting:
-
-```ts
-function andy() {
-  const idea = await coffee();
-  return build(idea);
-}
-```
-
-The same four colours (coral, amber, teal, lilac) run through the whole site.
 
 ## 🥚 Easter eggs
 

@@ -75,7 +75,6 @@ h2 { margin: 10px 0 32px; font-size: 40px; letter-spacing: -0.03em; }
 .code-tab { padding: 12px 18px; border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 13px; color: var(--muted); }
 .code pre { margin: 0; padding: 22px 18px; overflow-x: auto; font-family: var(--mono); font-size: 16px; line-height: 2; }
 .ln { display: inline-block; width: 2.5ch; color: var(--faint); user-select: none; }
-.code figcaption { margin-top: 12px; font-family: var(--mono); font-size: 13px; color: var(--faint); }
 
 /* Projects */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
