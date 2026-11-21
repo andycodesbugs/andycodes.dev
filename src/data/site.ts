@@ -22,10 +22,19 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  { name: '[Project name]', type: 'Web app', description: '[One line on what it does.]', color: 'coral', accent: 'amber', repoUrl: links.github },
-  { name: '[Project name]', type: 'CLI tool', description: '[One line on what it does.]', color: 'teal', accent: 'lilac', repoUrl: links.github },
-  { name: '[Project name]', type: 'API', description: '[One line on what it does.]', color: 'amber', accent: 'coral', repoUrl: links.github },
-  { name: '[Project name]', type: 'Game', description: '[One line on what it does.]', color: 'lilac', accent: 'teal', repoUrl: links.github },
-  { name: '[Project name]', type: 'Library', description: '[One line on what it does.]', color: 'teal', accent: 'amber', repoUrl: links.github },
-  { name: '[Project name]', type: 'Bot', description: '[One line on what it does.]', color: 'coral', accent: 'lilac', repoUrl: links.github },
+  {
+    name: 'byteclub',
+    type: 'Studio',
+    description: 'Small Swiss software studio: websites, web and mobile apps, internal tools and careful AI features.',
+    color: 'coral',
+    accent: 'amber',
+    liveUrl: 'https://byteclub.ch',
+  },
+  {
+    name: 'Interlock',
+    type: 'Release security',
+    description: 'Release gate by byteclub: every build must agree, and nothing is signed or deployed until it is approved on a phone.',
+    color: 'teal',
+    accent: 'lilac',
+  },
 ];
